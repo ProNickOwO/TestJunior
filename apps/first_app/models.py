@@ -4,7 +4,7 @@ from django.db import models
 
 class Item(models.Model):
     name = models.CharField(max_length=399)
-
+    sku = models.CharField(max_length=20, null=True)
     price = models.FloatField(default=0)
     description = models.TextField()
     favorite_count = models.IntegerField(default=0)

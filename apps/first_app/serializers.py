@@ -7,7 +7,7 @@ from apps.first_app.models import Item
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        fields = ('name', 'price', 'description', 'favorite_count')
+        fields = ('name', 'sku', 'price', 'description', 'favorite_count')
 
 
 class WishlistSerializer(serializers.ModelSerializer):

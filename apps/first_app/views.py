@@ -28,6 +28,7 @@ class AddItem(GenericAPIView):
 
         item = Item.objects.create(
             name=validated_data['name'],
+            sku=validated_data['sku'],
             price=validated_data['price'],
             description=validated_data['description'],
         )
@@ -43,6 +44,7 @@ class ChangeItem(GenericAPIView):
 
         item, _ = Item.objects.get(pk=item_id)
         item.name = validated_data['name']
+        item.sku = validated_data['sku']
         item.price = validated_data['price']
         item.description = validated_data['description']
         item.save()
