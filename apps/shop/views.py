@@ -43,10 +43,14 @@ class ChangeItem(GenericAPIView):
         validated_data = request.serializer.validated_data
 
         item = Item.objects.get(pk=item_id)
-        item.name = validated_data['name']
-        item.sku = validated_data['sku']
-        item.price = validated_data['price']
-        item.description = validated_data['description']
+        if 'name' in validated_data:
+            item.name = validated_data['name']
+        if 'sku' in validated_data:
+            item.sku = validated_data['sku']
+        if 'price' in validated_data:
+            item.price = validated_data['price']
+        if 'description' in validated_data:
+            item.description = validated_data['description']
         item.save()
 
         return Response(ItemSerializer(item).data)
