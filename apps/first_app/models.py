@@ -10,6 +10,7 @@ class Item(models.Model):
     favorite_count = models.IntegerField(default=0)
 
 
-class Whishlist(models.Model):
+class Wishlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=399)
     items = models.ManyToManyField(Item)

@@ -14,4 +14,8 @@ urlpatterns = [
     path('add_item', AddItem.as_view(), name='create item'),
     path('change_item/<int:item_id>', ChangeItem.as_view(), name='change item'),
     path('delete_item/<int:item_id>', DeleteItem.as_view(), name='delete item'),
+    path('all_lists', ProductsView.as_view(), name='all lists'),
+    path('add_list', AddItem.as_view(), name='create list'),
+    path('change_list/<int:list_id>', ChangeItem.as_view(), name='change list'),
+    path('delete_list/<int:list_id>', DeleteItem.as_view(), name='delete list'),
 ]

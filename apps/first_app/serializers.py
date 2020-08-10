@@ -1,12 +1,21 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+
 from apps.first_app.models import Item
 
 
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        fields = ('name', 'price', 'description', 'favorite_count')  # fields to edit
+        fields = ('name', 'price', 'description', 'favorite_count')
+
+
+class WishlistSerializer(serializers.ModelSerializer):
+    items = ItemSerializer(many=True)
+
+    class Meta:
+        model = Item
+        fields = ('name', 'items')
 
 
 class RegisterSerializer(serializers.ModelSerializer):

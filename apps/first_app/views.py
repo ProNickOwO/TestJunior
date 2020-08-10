@@ -7,8 +7,8 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from apps.first_app.models import Item
-from apps.first_app.serializers import ItemSerializer, RegisterSerializer, LoginSerializer
+from apps.first_app.models import Item, Wishlist
+from apps.first_app.serializers import ItemSerializer, RegisterSerializer, LoginSerializer, WishlistSerializer
 
 
 class ProductsView(GenericAPIView):
@@ -54,6 +54,50 @@ class DeleteItem(GenericAPIView):
 
     def get(self, request, item_id):
         Item.objects.get(pk=item_id).delete()
+
+        return Response(status.HTTP_200_OK)
+
+
+class WishlistsView(GenericAPIView):
+    serializer_class = WishlistSerializer
+
+    def get(self, request):
+        wlist = Wishlist.objects.filter(user=request.user)
+        return Response(WishlistSerializer(wlist).data)
+
+
+class AddList(GenericAPIView):
+    serializer_class = WishlistSerializer
+
+    @serialize_decorator(WishlistSerializer)
+    def post(self, request):
+        validated_data = request.serializer.validated_data
+
+        wlist = Wishlist.objects.create(
+            user=request.user,
+            name=validated_data['name'],
+        )
+        return Response(WishlistSerializer(wlist).data)
+
+
+class ChangeList(GenericAPIView):
+    serializer_class = WishlistSerializer
+
+    @serialize_decorator(WishlistSerializer)
+    def patch(self, request, list_id):
+        validated_data = request.serializer.validated_data
+
+        wlist, _ = Wishlist.objects.get_or_create(pk=list_id, user=request.user)
+        wlist.name = validated_data['name']
+        wlist.save()
+
+        return Response(WishlistSerializer(wlist).data)
+
+
+class DeleteList(GenericAPIView):
+
+    def get(self, request, list_id):
+        Item.objects.get(pk=list_id, name=request.user).delete()
 
         return Response(status.HTTP_200_OK)
 
