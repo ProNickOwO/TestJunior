@@ -16,7 +16,7 @@ class ProductsView(GenericAPIView):
 
     def get(self, request):
         items = Item.objects.all()
-        return Response(ItemSerializer(items).data)
+        return Response(ItemSerializer(items, many=True).data)
 
 
 class AddItem(GenericAPIView):
