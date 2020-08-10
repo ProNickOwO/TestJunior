@@ -42,7 +42,7 @@ class ChangeItem(GenericAPIView):
     def patch(self, request, item_id):
         validated_data = request.serializer.validated_data
 
-        item, _ = Item.objects.get(pk=item_id)
+        item = Item.objects.get(pk=item_id)
         item.name = validated_data['name']
         item.sku = validated_data['sku']
         item.price = validated_data['price']
