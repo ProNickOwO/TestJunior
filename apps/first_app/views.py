@@ -41,7 +41,7 @@ class ChangeItem(GenericAPIView):
     def patch(self, request, item_id):
         validated_data = request.serializer.validated_data
 
-        item, _ = Item.objects.get_or_create(pk=item_id)
+        item, _ = Item.objects.get(pk=item_id)
         item.name = validated_data['name']
         item.price = validated_data['price']
         item.description = validated_data['description']
@@ -87,7 +87,7 @@ class ChangeList(GenericAPIView):
     def patch(self, request, list_id):
         validated_data = request.serializer.validated_data
 
-        wlist, _ = Wishlist.objects.get_or_create(pk=list_id, user=request.user)
+        wlist, _ = Wishlist.objects.get(pk=list_id, user=request.user)
         wlist.name = validated_data['name']
         wlist.save()
 
@@ -100,6 +100,32 @@ class DeleteList(GenericAPIView):
         Item.objects.get(pk=list_id, name=request.user).delete()
 
         return Response(status.HTTP_200_OK)
+
+
+class AddToList(GenericAPIView):
+
+    def get(self, request, list_id, item_id):
+        wlist = Wishlist.objects.get(pk=list_id, user=request.user)
+        item = Item.objects.get(pk=item_id)
+        if item not in Wishlist.objects.filter(user=request.user):
+            item.favorite_count = item.favorite_count + 1
+            item.save()
+        wlist.items.add(item)
+        wlist.save()
+        return Response(WishlistSerializer(wlist).data)
+
+
+class RemoveFromList(GenericAPIView):
+
+    def get(self, request, list_id, item_id):
+        wlist = Wishlist.objects.get(pk=list_id, user=request.user)
+        item = Item.objects.get(pk=item_id)
+        wlist.items.remove(item)
+        if item not in Wishlist.objects.filter(user=request.user):
+            item.favorite_count = item.favorite_count - 1
+            item.save()
+        wlist.save()
+        return Response(WishlistSerializer(wlist).data)
 
 
 class RegisterUserView(GenericAPIView):
