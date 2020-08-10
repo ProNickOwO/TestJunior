@@ -16,11 +16,11 @@ class ItemSerializer(serializers.ModelSerializer):
 
 
 class WishlistSerializer(serializers.ModelSerializer):
-    items = ItemSerializer(many=True)
+    items = ItemSerializer(many=True, required=False)
 
     class Meta:
         model = Item
-        fields = ('name', 'items')
+        fields = ('id', 'name', 'items')
 
 
 class RegisterSerializer(serializers.ModelSerializer):
