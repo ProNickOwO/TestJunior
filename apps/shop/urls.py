@@ -3,7 +3,7 @@ Your app urls file
 """
 from django.urls import path
 
-from apps.first_app.views import ProductsView, RegisterUserView, LoginAPIView, LogoutAPIView, AddItem, ChangeItem, \
+from apps.shop.views import ProductsView, RegisterUserView, LoginAPIView, LogoutAPIView, AddItem, ChangeItem, \
     DeleteItem, AddToList, RemoveFromList
 
 urlpatterns = [

@@ -16,7 +16,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',  # rest apps
     'apps.common',  # set application
-    'apps.first_app'
+    'apps.shop'
 ]
 
 MIDDLEWARE = [

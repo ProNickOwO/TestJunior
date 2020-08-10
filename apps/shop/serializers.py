@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from apps.first_app.models import Item
+from apps.shop.models import Item
 
 
 class ItemSerializer(serializers.ModelSerializer):

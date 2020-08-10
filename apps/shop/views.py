@@ -7,8 +7,8 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from apps.first_app.models import Item, Wishlist
-from apps.first_app.serializers import ItemSerializer, RegisterSerializer, LoginSerializer, WishlistSerializer
+from apps.shop.models import Item, Wishlist
+from apps.shop.serializers import ItemSerializer, RegisterSerializer, LoginSerializer, WishlistSerializer
 
 
 class ProductsView(GenericAPIView):

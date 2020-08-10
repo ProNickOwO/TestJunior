@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
             name='Whishlist',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('items', models.ManyToManyField(to='first_app.Item')),
+                ('items', models.ManyToManyField(to='shop.Item')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
