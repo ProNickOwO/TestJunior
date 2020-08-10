@@ -2,7 +2,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from drf_util.decorators import serialize_decorator
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -11,99 +11,104 @@ from apps.shop.models import Item, Wishlist
 from apps.shop.serializers import ItemSerializer, RegisterSerializer, LoginSerializer, WishlistSerializer
 
 
-class ProductsView(GenericAPIView):
+class ProductViewSet(viewsets.ViewSet):
     serializer_class = ItemSerializer
 
-    def get(self, request):
+    def list(self, request):
         items = Item.objects.all()
         return Response(ItemSerializer(items, many=True).data)
 
+    def create(self, request):
+        serializer = ItemSerializer(data=request.data)
+        if serializer.is_valid():
+            Item.objects.create(
+                name=serializer.data['name'],
+                sku=serializer.data['sku'],
+                price=serializer.data['price'],
+                description=serializer.data['description'],
+            )
+        return Response(serializer.data)
 
-class AddItem(GenericAPIView):
-    serializer_class = ItemSerializer
+    def partial_update(self, request, pk=None):
+        serializer = ItemSerializer(data=request.data)
+        item = Item.objects.get(pk=pk)
+        if serializer.is_valid():
+            if 'name' in serializer.data:
+                item.name = serializer.data['name']
+            if 'sku' in serializer.data:
+                item.sku = serializer.data['sku']
+            if 'price' in serializer.data:
+                item.price = serializer.data['price']
+            if 'description' in serializer.data:
+                item.description = serializer.data['description']
+            item.save()
 
-    @serialize_decorator(ItemSerializer)
-    def post(self, request):
-        validated_data = request.serializer.validated_data
+        return Response(serializer.data)
 
-        item = Item.objects.create(
-            name=validated_data['name'],
-            sku=validated_data['sku'],
-            price=validated_data['price'],
-            description=validated_data['description'],
-        )
-        return Response(ItemSerializer(item).data)
+    def update(self, request, pk=None):
+        serializer = ItemSerializer(data=request.data)
+        item = Item.objects.get(pk=pk)
+        if serializer.is_valid():
+            if 'name' in serializer.data:
+                item.name = serializer.data['name']
+            if 'sku' in serializer.data:
+                item.sku = serializer.data['sku']
+            if 'price' in serializer.data:
+                item.price = serializer.data['price']
+            if 'description' in serializer.data:
+                item.description = serializer.data['description']
+            item.save()
 
+        return Response(serializer.data)
 
-class ChangeItem(GenericAPIView):
-    serializer_class = ItemSerializer
-
-    @serialize_decorator(ItemSerializer)
-    def patch(self, request, item_id):
-        validated_data = request.serializer.validated_data
-
-        item = Item.objects.get(pk=item_id)
-        if 'name' in validated_data:
-            item.name = validated_data['name']
-        if 'sku' in validated_data:
-            item.sku = validated_data['sku']
-        if 'price' in validated_data:
-            item.price = validated_data['price']
-        if 'description' in validated_data:
-            item.description = validated_data['description']
-        item.save()
-
-        return Response(ItemSerializer(item).data)
-
-
-class DeleteItem(GenericAPIView):
-
-    def get(self, request, item_id):
-        Item.objects.get(pk=item_id).delete()
+    def destroy(self, request, pk=None):
+        Item.objects.get(pk=pk).delete()
 
         return Response(status.HTTP_200_OK)
 
 
-class WishlistsView(GenericAPIView):
+class WishlistViewSet(viewsets.ViewSet):
     serializer_class = WishlistSerializer
 
-    def get(self, request):
+    def list(self, request):
         wlist = Wishlist.objects.filter(user=request.user)
         return Response(WishlistSerializer(wlist, many=True).data)
 
+    def create(self, request):
+        serializer = ItemSerializer(data=request.data)
+        if serializer.is_valid():
+            wlist = Wishlist.objects.create(
+                user=request.user,
+                name=serializer.data['name'],
+            )
+            return Response(WishlistSerializer(wlist).data)
+        else:
+            return Response(status.HTTP_304_NOT_MODIFIED)
 
-class AddList(GenericAPIView):
-    serializer_class = WishlistSerializer
+    def partial_update(self, request, pk=None):
+        serializer = ItemSerializer(data=request.data)
+        if serializer.is_valid():
+            wlist = Wishlist.objects.get(pk=pk, user=request.user)
+            wlist.name = serializer.data['name']
+            wlist.save()
 
-    @serialize_decorator(WishlistSerializer)
-    def post(self, request):
-        validated_data = request.serializer.validated_data
+            return Response(WishlistSerializer(wlist).data)
+        else:
+            return Response(status.HTTP_304_NOT_MODIFIED)
 
-        wlist = Wishlist.objects.create(
-            user=request.user,
-            name=validated_data['name'],
-        )
-        return Response(WishlistSerializer(wlist).data)
+    def update(self, request, pk=None):
+        serializer = ItemSerializer(data=request.data)
+        if serializer.is_valid():
+            wlist = Wishlist.objects.get(pk=pk, user=request.user)
+            wlist.name = serializer.data['name']
+            wlist.save()
 
+            return Response(WishlistSerializer(wlist).data)
+        else:
+            return Response(status.HTTP_304_NOT_MODIFIED)
 
-class ChangeList(GenericAPIView):
-    serializer_class = WishlistSerializer
-
-    @serialize_decorator(WishlistSerializer)
-    def patch(self, request, list_id):
-        validated_data = request.serializer.validated_data
-
-        wlist = Wishlist.objects.get(pk=list_id, user=request.user)
-        wlist.name = validated_data['name']
-        wlist.save()
-
-        return Response(WishlistSerializer(wlist).data)
-
-
-class DeleteList(GenericAPIView):
-
-    def get(self, request, list_id):
-        Wishlist.objects.get(pk=list_id, user=request.user).delete()
+    def destroy(self, request, pk=None):
+        Wishlist.objects.get(pk=pk, user=request.user).delete()
 
         return Response(status.HTTP_200_OK)
 
