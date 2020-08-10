@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from drf_util.decorators import serialize_decorator
 from rest_framework import status, viewsets
 from rest_framework.generics import GenericAPIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from apps.shop.models import Item, Wishlist
@@ -13,6 +13,7 @@ from apps.shop.serializers import ItemSerializer, RegisterSerializer, LoginSeria
 
 class ProductViewSet(viewsets.ViewSet):
     serializer_class = ItemSerializer
+    permission_classes = [IsAuthenticated]
 
     def list(self, request):
         items = Item.objects.all()
@@ -69,6 +70,7 @@ class ProductViewSet(viewsets.ViewSet):
 
 class WishlistViewSet(viewsets.ViewSet):
     serializer_class = WishlistSerializer
+    permission_classes = [IsAuthenticated]
 
     def list(self, request):
         wlist = Wishlist.objects.filter(user=request.user)
