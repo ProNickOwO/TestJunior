@@ -1,12 +1,12 @@
 # Create your views here.
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from drf_util.decorators import serialize_decorator
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from drf_util.decorators import serialize_decorator
 from apps.first_app.models import Item
 from apps.first_app.serializers import ItemSerializer, RegisterSerializer, LoginSerializer
 
@@ -18,6 +18,10 @@ class ProductsView(GenericAPIView):
         items = Item.objects.all()
         return Response(ItemSerializer(items).data)
 
+
+class AddItem(GenericAPIView):
+    serializer_class = ItemSerializer
+
     @serialize_decorator(ItemSerializer)
     def post(self, request):
         validated_data = request.serializer.validated_data
@@ -28,6 +32,30 @@ class ProductsView(GenericAPIView):
             description=validated_data['description'],
         )
         return Response(ItemSerializer(item).data)
+
+
+class ChangeItem(GenericAPIView):
+    serializer_class = ItemSerializer
+
+    @serialize_decorator(ItemSerializer)
+    def patch(self, request, item_id):
+        validated_data = request.serializer.validated_data
+
+        item, _ = Item.objects.get_or_create(pk=item_id)
+        item.name = validated_data['name']
+        item.price = validated_data['price']
+        item.description = validated_data['description']
+        item.save()
+
+        return Response(ItemSerializer(item).data)
+
+
+class DeleteItem(GenericAPIView):
+
+    def get(self, request, item_id):
+        Item.objects.get(pk=item_id).delete()
+
+        return Response(status.HTTP_200_OK)
 
 
 class RegisterUserView(GenericAPIView):
