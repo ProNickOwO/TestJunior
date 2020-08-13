@@ -18,7 +18,7 @@ class WishlistViewSet(viewsets.ModelViewSet):
         return Wishlist.objects.filter(user=user)
 
     def create(self, request, *args, **kwargs):
-        request.data['user'] = request.user
+        request.data['user_id'] = request.user.id
         Wishlist.objects.create(**request.data)
         return Response(request.data)
 
