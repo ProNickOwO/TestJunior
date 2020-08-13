@@ -13,11 +13,9 @@
    
     deactivate # deactivate environment
 
-# APPS
- - create application in specific folder
-
-    python manage.py startapp common apps/common # you should create empty folder
-
-
 # Payload
  - pip install -r requirements.txt # installing libraries 
+ 
+# Test users
+    Test1 - 123
+    Test2 - 123
